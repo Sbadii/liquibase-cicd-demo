@@ -16,6 +16,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: rootpass
           MYSQL_DATABASE: devops_tp
+          MYSQL_ROOT_HOST: '%'
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -33,13 +34,21 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean package -DskipTests
 
+      #  Nouvelle étape : Créer la base si elle n'existe pas
+      - name: Create database if not exists
+        run: |
+          mysql -h 127.0.0.1 -u root -prootpass -e "CREATE DATABASE IF NOT EXISTS devops_tp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          mysql -h 127.0.0.1 -u root -prootpass -e "USE devops_tp; SHOW TABLES;"
+
+      # Exécution de Liquibase avec le fichier properties
       - name: Run Liquibase migrations
         run: mvn liquibase:update
         env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/devops_tp?useSSL=false&allowPublicKeyRetrieval=true
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: rootpass
+          # Ces variables sont lues par liquibase.properties
+          LIQUIBASE_URL: jdbc:mysql://localhost:3306/devops_tp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+          LIQUIBASE_USERNAME: root
+          LIQUIBASE_PASSWORD: rootpass
 
-      - name: Verify tables exist (optional)
+      - name: Verify tables exist
         run: |
           mysql -h 127.0.0.1 -u root -prootpass -e "USE devops_tp; SHOW TABLES;"
