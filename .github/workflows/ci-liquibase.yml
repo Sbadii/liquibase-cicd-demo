@@ -40,12 +40,7 @@ jobs:
           mysql -h 127.0.0.1 -u root -prootpass -e "USE devops_tp; SHOW TABLES;"
 
       - name: Run Liquibase migrations
-        run: mvn liquibase:update \
-          -Dliquibase.url=jdbc:mysql://localhost:3306/devops_tp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC \
-          -Dliquibase.username=root \
-          -Dliquibase.password=rootpass \
-          -Dliquibase.changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml \
-          -Dliquibase.driver=com.mysql.cj.jdbc.Driver
+        run: mvn liquibase:update
 
       - name: Verify tables exist
         run: |
