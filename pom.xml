@@ -57,12 +57,31 @@
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+
+        <!-- Plugin Liquibase pour Maven -->
+        <plugin>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <version>4.31.1</version>
+            <configuration>
+                <!-- Pointe vers le fichier liquibase.properties à la racine -->
+                <propertyFile>liquibase.properties</propertyFile>
+            </configuration>
+            <dependencies>
+                <!-- Ajoute le driver MySQL pour que Liquibase puisse se connecter -->
+                <dependency>
+                    <groupId>com.mysql</groupId>
+                    <artifactId>mysql-connector-j</artifactId>
+                    <version>9.1.0</version> <!-- ou 8.0.33 si tu préfères -->
+                </dependency>
+            </dependencies>
+        </plugin>
+    </plugins>
+</build>
 
 </project>
